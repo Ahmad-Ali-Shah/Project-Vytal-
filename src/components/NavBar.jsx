@@ -7,14 +7,21 @@ const links = [
   { to: '/report', label: 'Report' },
 ]
 
-export default function NavBar() {
+export default function NavBar({ onReplayIntro }) {
   return (
     <header className="navbar">
       <div className="navbar__inner">
-        <NavLink to="/" className="navbar__brand" end>
-          <PulseMark size={26} />
-          VYTAL
-        </NavLink>
+        <div className="navbar__brand-group">
+          <NavLink to="/" className="navbar__brand" end>
+            <PulseMark size={26} />
+            VYTAL
+          </NavLink>
+          {onReplayIntro && (
+            <button className="navbar__intro-btn" type="button" onClick={onReplayIntro} title="Replay intro">
+              Intro
+            </button>
+          )}
+        </div>
 
         <nav className="navbar__links">
           {links.map((link) => (
@@ -29,7 +36,7 @@ export default function NavBar() {
           ))}
         </nav>
 
-        <div className="navbar__status" title="TASK-001 keeps records in session memory only">
+        <div className="navbar__status" title="Records remain session-memory preview data">
           <span className="pill-dot" />
           Preview
         </div>
