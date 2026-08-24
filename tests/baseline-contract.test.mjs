@@ -68,7 +68,7 @@ test('application shell retains scan dashboard and report routes', () => {
   assert.match(app, /path="\/report"/)
 })
 
-test('browser runtime contains no provider-secret or direct provider API path', () => {
+test('browser runtime contains no provider-secret or false backend path', () => {
   const files = collectFiles('src')
   assert.ok(files.length > 0, 'src runtime must exist')
   const source = files.map(read).join('\n')
@@ -79,6 +79,12 @@ test('browser runtime contains no provider-secret or direct provider API path', 
     /api\.groq\.com/i,
     /dashscope[^'"\s]*/i,
     /gsk_[A-Za-z0-9_-]{10,}/,
+    /Qwen AI/i,
+    /Alibaba Cloud/i,
+    /Offline-ready storage/i,
+    /Syncing to Cloud/i,
+    /All Synced/i,
+    /Pending sync/i,
   ]
 
   for (const pattern of forbidden) {
