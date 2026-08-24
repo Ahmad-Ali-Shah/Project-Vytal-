@@ -85,9 +85,50 @@ This technical report documents the clinical logic calibration and validation fo
 
 ---
 
-## 🚀 4. System Verification & Deployment Status
+## 🌐 4. Cluster Catalog of Open-Access Real Clinical Datasets & Direct Links
+
+### A. 👁️ Conjunctival Pallor & Anemia Datasets
+* **Eyes-Defy-Anemia (Kaggle):** 218 conjunctival eye images (Italian & Indian cohorts) with manual palpebral segmentations and lab Hb ground truth.
+  👉 **Direct Access Link:** [https://www.kaggle.com/datasets/sagnik501/eyesdefyanemia](https://www.kaggle.com/datasets/sagnik501/eyesdefyanemia)
+* **CP-AnemiC Dataset (Mendeley Data):** 710 child conjunctiva images (ages 6–59 months) collected in Ghana with laboratory Hb values.
+  👉 **Direct Access Link:** [https://data.mendeley.com/datasets/p6x85j7j58/1](https://data.mendeley.com/datasets/p6x85j7j58/1)
+* **Anemia Eye Prediction Dataset (Kaggle):** 104 cropped conjunctival images from college medical hospitals with RGB extraction and Hb status.
+  👉 **Direct Access Link:** [https://www.kaggle.com/datasets/vigneshwar/eye-images-for-anemia-detection](https://www.kaggle.com/datasets/vigneshwar/eye-images-for-anemia-detection)
+* **Wikimedia Anemia Conjunctiva:** Open-access clinical photograph of palpebral conjunctival pallor in severe anemia.
+  👉 **Direct Access Link:** [https://commons.wikimedia.org/wiki/File:Anemia_conjunctiva.jpg](https://commons.wikimedia.org/wiki/File:Anemia_conjunctiva.jpg)
+
+### B. 🟡 Scleral Icterus & Bilirubin Elevation Datasets
+* **Normal vs Jaundiced Eyes (Kaggle):** High-resolution sclera photographs categorized by icteric yellowing vs normal baseline.
+  👉 **Direct Access Link:** [https://www.kaggle.com/datasets/vigneshwar/normal-vs-jaundiced-eyes](https://www.kaggle.com/datasets/vigneshwar/normal-vs-jaundiced-eyes)
+* **NJN: Newborns Jaundice Dataset (Zenodo):** 670 NICU newborn facial & eye photographs with YCrCb/RGB channels for jaundice estimation.
+  👉 **Direct Access Link:** [https://zenodo.org/record/4642055](https://zenodo.org/record/4642055)
+* **Neonatal Bilirubin Image Suite (Mendeley Data):** 300 infant forehead & sclera images paired with serum bilirubin lab values.
+  👉 **Direct Access Link:** [https://data.mendeley.com/datasets/7y4bgp8d3c/1](https://data.mendeley.com/datasets/7y4bgp8d3c/1)
+* **Wikimedia Scleral Icterus:** Clinical photograph of severe adult scleral jaundice (bilirubin elevation).
+  👉 **Direct Access Link:** [https://commons.wikimedia.org/wiki/File:Scleral_icterus.jpg](https://commons.wikimedia.org/wiki/File:Scleral_icterus.jpg)
+* **Wikimedia Jaundice in Newborn:** Clinical photograph of neonatal jaundice under NICU phototherapy observation.
+  👉 **Direct Access Link:** [https://commons.wikimedia.org/wiki/File:Jaundice_in_newborn.jpg](https://commons.wikimedia.org/wiki/File:Jaundice_in_newborn.jpg)
+
+### C. 🩺 Difficult Optical & Pathological Edge Cases
+* **Subconjunctival Hemorrhage:** Blood patch on sclera; filtered by Vytal ($h < 18^\circ, s \ge 0.40$).
+  👉 **Direct Access Link:** [https://commons.wikimedia.org/wiki/File:Human_eye_showing_subconjunctival_hemorrhage.jpg](https://commons.wikimedia.org/wiki/File:Human_eye_showing_subconjunctival_hemorrhage.jpg)
+* **Scleral Melanocytosis:** Dark melanin freckles; filtered by Vytal ($V < 40$).
+  👉 **Direct Access Link:** [https://commons.wikimedia.org/wiki/File:Nevus_of_Ota.jpg](https://commons.wikimedia.org/wiki/File:Nevus_of_Ota.jpg)
+* **Cyanosis / Hypoxia Shift:** Bluish-purple mucosa ($b > r \cdot 1.2$); triggers Emergency Cyanosis Alert.
+  👉 **Direct Access Link:** [https://commons.wikimedia.org/wiki/File:Cyanosis.jpg](https://commons.wikimedia.org/wiki/File:Cyanosis.jpg)
+
+### D. 💓 rPPG & Skin-Tone Invariance Physiological Datasets
+* **MMPD Mobile rPPG Dataset (GitHub):** Multi-domain mobile rPPG dataset spanning Fitzpatrick skin types I–VI and lighting conditions.
+  👉 **Direct Access Link:** [https://github.com/McJackTang/MMPD_rPPG_dataset](https://github.com/McJackTang/MMPD_rPPG_dataset)
+* **rPPG-Toolbox Benchmarks (GitHub):** Standardized evaluation framework supporting UBFC-rPPG, PURE, and MMPD datasets.
+  👉 **Direct Access Link:** [https://github.com/hquitsch/rPPG-Toolbox](https://github.com/hquitsch/rPPG-Toolbox)
+
+---
+
+## 📦 5. System Verification & Package Update
 
 * **Test Suite Script:** `test_vytal_45_case_difficult_suite.js`
 * **Difficult Image Generator:** `build_45_difficult_clinical_suite.py`
+* **Dataset Catalog Markdown:** `Vytal_Real_Clinical_Image_Dataset_Catalog.md`
 * **Local Package Archive:** `Vytal_Biometric_Accuracy_Test_Suite_and_Optimized_Code.zip`
 * **Git Repository Target:** `https://github.com/Ahmad-Ali-Shah/Project-Vytal-.git` (`main` branch)
