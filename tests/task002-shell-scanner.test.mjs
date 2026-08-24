@@ -82,11 +82,9 @@ test('CSS preserves responsive Preview status, status banner, splash and WebKit 
   assert.match(css, /\.splash-overlay/)
   assert.match(css, /-webkit-mask-image:\s*-webkit-radial-gradient\(white, black\)/)
   assert.match(css, /isolation:\s*isolate/)
-
-  const mobileBlock = css.match(/@media \(max-width: 640px\) \{[\s\S]*?\n\}/)?.[0] || ''
-  assert.match(mobileBlock, /\.navbar__inner[\s\S]*gap:\s*10px/)
-  assert.match(mobileBlock, /\.navbar__status\s*\{[\s\S]*display:\s*flex/)
-  assert.match(mobileBlock, /\.navbar__status\s*\{[\s\S]*font-size:\s*11px/)
+  assert.match(css, /@media \(max-width: 640px\)[\s\S]*?\.navbar__inner\s*\{[^}]*gap:\s*10px/)
+  assert.match(css, /@media \(max-width: 640px\)[\s\S]*?\.navbar__status\s*\{[^}]*display:\s*flex/)
+  assert.match(css, /@media \(max-width: 640px\)[\s\S]*?\.navbar__status\s*\{[^}]*font-size:\s*11px/)
 })
 
 test('TASK-002 does not restore mixed-commit provider or credential behavior', () => {
