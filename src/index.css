@@ -59,7 +59,10 @@ button, input, select { font-family: inherit; }
 
 .navbar { position: sticky; top: 0; z-index: 10; background: rgba(19,17,16,.92); border-bottom: 1px solid var(--card-border); backdrop-filter: blur(8px); }
 .navbar__inner { max-width: var(--shell-max); margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.navbar__brand-group { display: flex; align-items: center; gap: 12px; }
 .navbar__brand { display: flex; align-items: center; gap: 10px; color: var(--text-white); font-size: 15px; font-weight: 700; text-decoration: none; }
+.navbar__intro-btn { padding: 3px 8px; color: var(--text-dim); background: transparent; border: 1px solid var(--card-border); border-radius: 999px; cursor: pointer; font-size: 11px; }
+.navbar__intro-btn:hover { color: var(--text-white); border-color: var(--text-dim); }
 .navbar__links { display: flex; align-items: center; gap: 4px; }
 .navlink { padding: 8px 14px; color: var(--text-gray); border-radius: 999px; font-size: 14px; font-weight: 600; text-decoration: none; }
 .navlink:hover { color: var(--text-white); }
@@ -76,8 +79,10 @@ button, input, select { font-family: inherit; }
 .mode-toggle { display: inline-flex; padding: 4px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 999px; }
 .mode-toggle__btn { padding: 8px 16px; color: var(--text-gray); background: transparent; border: 0; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 600; }
 .mode-toggle__btn.active { color: var(--bg); background: var(--text-white); }
+.scanner-status-banner { width: 100%; max-width: 320px; min-height: 30px; display: flex; align-items: center; justify-content: center; }
+.scanner-status-banner .pill { max-width: 100%; padding: 6px 14px; text-align: center; }
 
-.viewfinder { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: radial-gradient(circle at 50% 40%, var(--card-bg-raised), var(--bg)); border: 2px solid var(--card-border); border-radius: 50%; transition: border-color .2s ease; }
+.viewfinder { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: radial-gradient(circle at 50% 40%, var(--card-bg-raised), var(--bg)); border: 2px solid var(--card-border); border-radius: 50%; transition: border-color .2s ease; -webkit-mask-image: -webkit-radial-gradient(white, black); isolation: isolate; }
 .viewfinder video { position: absolute; inset: 0; }
 .viewfinder__face-guide, .viewfinder__finger-guide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
 .face-oval { width: 60%; height: 75%; border: 2px dashed rgba(255,255,255,.4); border-radius: 50%; transition: .2s ease; }
@@ -86,7 +91,6 @@ button, input, select { font-family: inherit; }
 .finger-icon-wrap.is-aligned { color: var(--accent); border-color: var(--accent); border-style: solid; box-shadow: 0 0 20px rgba(255,77,94,.4); }
 .viewfinder__placeholder { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 0 24px; color: var(--text-dim); font-size: 13px; }
 .viewfinder__placeholder.error { color: var(--accent); }
-.viewfinder__scan-status { position: absolute; top: 14px; z-index: 5; max-width: 88%; box-shadow: 0 4px 12px rgba(0,0,0,.5); }
 .viewfinder__scanline { position: absolute; left: 8%; right: 8%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); animation: scanline 1.8s ease-in-out infinite; }
 @keyframes scanline { 0%,100% { top: 15%; } 50% { top: 85%; } }
 
@@ -165,17 +169,31 @@ button, input, select { font-family: inherit; }
 .report-sheet__disclaimer { margin-top: 22px; padding-top: 14px; color: #81786f; border-top: 1px solid #e4ddd4; font-size: 11px; line-height: 1.5; }
 .report-actions { margin-top: 24px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 
+.splash-overlay { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: var(--bg); cursor: pointer; transition: opacity .5s ease; }
+.splash-overlay.is-fading { opacity: 0; pointer-events: none; }
+.splash-card { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 48px 56px; background: var(--card-bg); border: 2px solid var(--accent); border-radius: 28px; box-shadow: 0 0 50px rgba(255,77,94,.25); animation: splash-pop .6s ease-out forwards; }
+.splash-pulse-path { stroke-dasharray: 220; stroke-dashoffset: 220; animation: splash-draw-pulse 1.4s ease-in-out forwards; }
+.splash-text { text-align: center; opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s ease; }
+.splash-text.show { opacity: 1; transform: translateY(0); }
+.splash-brand { color: var(--text-white); font-size: 28px; font-weight: 800; letter-spacing: .12em; }
+.splash-sub { margin-top: 4px; color: var(--text-dim); font-size: 13px; }
+.splash-skip-hint { display: block; margin-top: 14px; color: var(--text-dim); font-size: 11px; opacity: .7; }
+@keyframes splash-pop { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
+@keyframes splash-draw-pulse { from { stroke-dashoffset: 220; } to { stroke-dashoffset: 0; } }
+
 @media (max-width: 860px) { .scan-layout { grid-template-columns: 1fr; } }
 @media (max-width: 640px) {
   .page { padding: 20px 16px 48px; }
-  .navbar__inner { padding: 12px 16px; flex-wrap: wrap; }
-  .navbar__status { display: none; }
+  .navbar__inner { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+  .navbar__status { display: flex; font-size: 11px; }
+  .navbar__links { order: 3; width: 100%; justify-content: center; }
   .stat-row { grid-template-columns: 1fr; }
   .report-sheet-wrap { padding: 14px; }
   .report-sheet { padding: 20px; }
   .report-sheet__patient, .report-sheet__vitals { grid-template-columns: 1fr; }
   .report-sheet__patient { flex-direction: column; }
   .report-patient-date { text-align: left; }
+  .splash-card { width: calc(100% - 32px); padding: 36px 24px; }
 }
 
 @media print {
