@@ -7,7 +7,7 @@ import { saveRecord } from '../lib/storage'
 
 const MODES = [
   { id: 'face', label: 'Face scan', hint: 'Hold the phone at arm’s length with your face centered in the guide oval.' },
-  { id: 'fingertip', label: 'Fingertip + flash', hint: 'Cover the rear camera lens and flash completely with your fingertip.' },
+  { id: 'fingertip', label: 'Fingertip contact', hint: 'Cover camera or webcam lens with your fingertip. If your device has a torch, Vytal will try to enable it.' },
 ]
 
 const READOUT_FIELDS = [
@@ -110,6 +110,7 @@ export default function ScanPage() {
   const scanStartRef = useRef(0)
   const signalQualityRef = useRef('none')
   const secondsLeftRef = useRef(Math.ceil(SCAN_DURATION_MS / 1000))
+  const hasTorchRef = useRef(false)
 
   useEffect(() => {
     let cancelled = false
@@ -180,7 +181,7 @@ export default function ScanPage() {
       setScanState('error')
       setErrorMsg(
         mode === 'fingertip'
-          ? 'Signal was inconsistent — ensure your fingertip firmly covers the camera and flash, then try again.'
+          ? 'Signal was inconsistent — keep your fingertip covering the camera or webcam lens and try again.'
           : 'Could not capture a clear pulse signal — keep your face still in steady lighting and try again.',
       )
       return
@@ -258,8 +259,13 @@ export default function ScanPage() {
           }
           const rgb = meanRgb(context, roi)
           if (rgb) {
-            const isRedDominant = rgb.r > 70 && rgb.r > rgb.g * 1.3 && rgb.r > rgb.b * 1.3
-            const isStrongContact = rgb.r > 100 && rgb.r > rgb.g * 1.5
+            const hasTorch = hasTorchRef.current
+            const redRatioG = rgb.r / Math.max(rgb.g, 1)
+            const redRatioB = rgb.r / Math.max(rgb.b, 1)
+            const minimumRed = hasTorch ? rgb.r > 60 : rgb.r > 20
+            const isRedDominant = minimumRed && redRatioG > (hasTorch ? 1.25 : 1.08) && redRatioB > (hasTorch ? 1.25 : 1.08)
+            const isStrongContact = isRedDominant && redRatioG > (hasTorch ? 1.45 : 1.15) && redRatioB > (hasTorch ? 1.35 : 1.1)
+
             if (isStrongContact) {
               currentQuality = 'perfect'
               samplesRef.current.push({ t: elapsed, ...rgb })
@@ -311,6 +317,7 @@ export default function ScanPage() {
     samplesRef.current = []
     signalQualityRef.current = 'none'
     setSignalQuality('none')
+    hasTorchRef.current = false
     secondsLeftRef.current = Math.ceil(SCAN_DURATION_MS / 1000)
     setSecondsLeft(secondsLeftRef.current)
 
@@ -325,7 +332,9 @@ export default function ScanPage() {
       if (mode === 'fingertip') {
         const [track] = stream.getVideoTracks()
         const capabilities = track.getCapabilities?.()
-        if (capabilities?.torch) {
+        const hasTorch = Boolean(capabilities?.torch)
+        hasTorchRef.current = hasTorch
+        if (hasTorch) {
           try {
             await track.applyConstraints({ advanced: [{ torch: true }] })
           } catch (error) {
@@ -367,6 +376,7 @@ export default function ScanPage() {
     setErrorMsg('')
     setSignalQuality('none')
     setSavedRecordId(null)
+    hasTorchRef.current = false
   }
 
   const activeMode = MODES.find((item) => item.id === mode)
@@ -379,12 +389,12 @@ export default function ScanPage() {
   } else if (scanState === 'scanning') {
     if (mode === 'fingertip') {
       if (signalQuality === 'perfect') {
-        liveStatusMsg = `Good contact — hold still (${secondsLeft}s)`
+        liveStatusMsg = `Fingertip detected — hold steady (${secondsLeft}s)`
         statusBadgeClass = 'pill--ok'
       } else if (signalQuality === 'adjusting') {
-        liveStatusMsg = `Adjust fingertip pressure (${secondsLeft}s)`
+        liveStatusMsg = `Adjust fingertip coverage (${secondsLeft}s)`
       } else {
-        liveStatusMsg = 'Cover the rear camera and flash with your fingertip'
+        liveStatusMsg = 'Cover camera or webcam lens with your fingertip'
         statusBadgeClass = 'pill--flag'
       }
     } else if (signalQuality === 'perfect') {
@@ -446,6 +456,12 @@ export default function ScanPage() {
             ))}
           </div>
 
+          {liveStatusMsg && (
+            <div className="scanner-status-banner">
+              <span className={`pill ${statusBadgeClass}`}><span className="pill-dot" />{liveStatusMsg}</span>
+            </div>
+          )}
+
           <div
             className={`viewfinder${scanState === 'scanning' ? ' is-scanning' : ''}`}
             style={{
@@ -478,13 +494,10 @@ export default function ScanPage() {
             {scanState === 'idle' && (
               <div className="viewfinder__placeholder">
                 <PulsePlaceholder mode={mode} />
-                <p>{mode === 'face' ? 'Align face inside frame and press Start Scan' : 'Cover rear camera and flash with fingertip'}</p>
+                <p>{mode === 'face' ? 'Align face inside frame and press Start Scan' : 'Cover camera or webcam lens with your fingertip'}</p>
               </div>
             )}
             {scanState === 'error' && <div className="viewfinder__placeholder error"><p>{errorMsg}</p></div>}
-            {scanState === 'scanning' && (
-              <div className={`viewfinder__scan-status pill ${statusBadgeClass}`}><span className="pill-dot" />{liveStatusMsg}</div>
-            )}
             {scanState === 'scanning' && <div className="viewfinder__scanline" />}
           </div>
 
@@ -546,7 +559,7 @@ export default function ScanPage() {
           <div className="card offline-card">
             <span className="pill pill--pending"><span className="pill-dot" /> Session-only preview</span>
             <p className="offline-card__copy">
-              TASK-001 keeps screening records in memory for this browser session only. No durable clinical database or remote synchronization is active yet.
+              Screening records remain in memory for this browser session only. No durable clinical database or remote synchronization is active yet.
             </p>
           </div>
         </section>
